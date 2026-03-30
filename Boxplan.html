@@ -173,7 +173,7 @@
 // ── Week label ──────────────────────────────────────────────────────────────
 const now = new Date();
 const nextMon = new Date(now);
-const diff = now.getDay() === 0 ? 1 : 8 - now.getDay();
+const diff = now.getDay() === 1 ? 0 : now.getDay() === 0 ? 1 : 8 - now.getDay();
 nextMon.setDate(now.getDate() + diff);
 const fmt = d => d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
 document.getElementById('weekLabel').textContent = fmt(nextMon);
