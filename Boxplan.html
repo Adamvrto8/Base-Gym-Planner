@@ -223,6 +223,7 @@ TRAINER NOTES: ${focus || 'None'}
 ATHLETE LEVEL: ${level}
 
 Rules:
+- Use METRIC system exclusively: weights in kg, distances in meters/km
 - No same movement pattern on consecutive days
 - Balance: Olympic lifting, powerlifting, gymnastics, cardio machines
 - Include a punchy weekly theme
@@ -364,7 +365,7 @@ async function tweakDay(i) {
   const day   = window._plan.days[i];
   const theme = window._plan.weekTheme;
 
-  const promptText = `You are an expert CrossFit programmer. Modify ONLY this single training day based on the coach's request. Keep the same JSON structure.
+  const promptText = `You are an expert CrossFit programmer. Modify ONLY this single training day based on the coach's request. Keep the same JSON structure. Use METRIC system exclusively: weights in kg, distances in meters/km.
 
 WEEKLY THEME: ${theme}
 DAY: ${day.day}
