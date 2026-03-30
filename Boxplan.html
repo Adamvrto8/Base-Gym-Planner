@@ -97,11 +97,11 @@
   .badge.sc { background: var(--teal); color: #000; }
   .badge.bg { background: var(--accent2); color: #fff; }
 
-  .tweak-bar { display: flex; gap: 6px; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px; }
-  .tweak-input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 10px; padding: 7px 9px; outline: none; min-width: 0; }
+  .tweak-bar { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px; }
+  .tweak-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 10px; padding: 7px 9px; outline: none; min-height: 60px; resize: vertical; line-height: 1.6; }
   .tweak-input:focus { border-color: var(--purple); }
   .tweak-input::placeholder { color: #333; }
-  .tweak-btn { background: transparent; border: 1px solid var(--purple); color: var(--purple); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; padding: 7px 10px; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+  .tweak-btn { width: 100%; background: transparent; border: 1px solid var(--purple); color: var(--purple); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; padding: 7px 10px; cursor: pointer; transition: all 0.2s; }
   .tweak-btn:hover { background: var(--purple); color: #fff; }
   .tweak-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .day-card.tweaking { opacity: 0.5; pointer-events: none; }
@@ -324,7 +324,7 @@ function renderPlan(plan) {
           <div class="scale-row"><span class="badge bg">BG</span><span>${esc(day.metcon.scaling.beginner)}</span></div>
         </div>
         <div class="tweak-bar">
-          <input class="tweak-input" id="tweak-${i}" placeholder="e.g. shorter metcon, no burpees..." onkeydown="if(event.key==='Enter')tweakDay(${i})"/>
+          <textarea class="tweak-input" id="tweak-${i}" placeholder="e.g. shorter metcon, no burpees...&#10;Ctrl+Enter to submit" onkeydown="if(event.key==='Enter'&&event.ctrlKey)tweakDay(${i})"></textarea>
           <button class="tweak-btn" id="tweak-btn-${i}" onclick="tweakDay(${i})">↺ REDO</button>
         </div>
       </div>`;
