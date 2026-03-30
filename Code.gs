@@ -34,6 +34,22 @@ function formatCell(value) {
   return String(value == null ? '' : value).trim();
 }
 
+function getISOWeekNumber(date) {
+  var d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  var day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - day);
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+function formatDate(date) {
+  return [
+    String(date.getDate()).padStart(2, '0'),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    date.getFullYear()
+  ].join('.');
+}
+
 // ─── GET LOGS ────────────────────────────────────────────────────────────────
 function getLogs(limit) {
   try {
@@ -49,7 +65,6 @@ function getLogs(limit) {
       if (cells.length > 0) rows.push(cells.join(' | '));
     }
 
-    // Return most recent rows when limit is set
     if (limit > 0 && rows.length > limit) rows = rows.slice(rows.length - limit);
 
     return { status: 'ok', log: rows.join('\n'), totalRows: rows.length };
@@ -61,35 +76,48 @@ function getLogs(limit) {
 // ─── SAVE DAY ────────────────────────────────────────────────────────────────
 function saveDay(d) {
   try {
-    var ss   = SpreadsheetApp.getActiveSpreadsheet();
+    var ss    = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName('Generated Plans');
 
     if (!sheet) {
       sheet = ss.insertSheet('Generated Plans');
       sheet.appendRow([
-        'Week Start', 'Week Theme', 'Day',
+        'Week #', 'Date', 'Week Theme', 'Day',
         'Strength', 'Strength Details', 'Coach Note',
         'Metcon', 'Metcon Details', 'Time Domain',
-        'RX', 'Scaled', 'Beginner',
-        'Date Saved'
+        'RX', 'Scaled', 'Beginner', 'Date Saved'
       ]);
       sheet.setFrozenRows(1);
     }
 
+    // Parse ISO weekStart (YYYY-MM-DD)
+    var parts = (d.weekStart || '').split('-');
+    var weekStartDate = new Date(
+      parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2])
+    );
+
+    // Exact date for this day = weekStart + dayIndex
+    var dayIndex = parseInt(d.dayIndex) || 0;
+    var dayDate  = new Date(weekStartDate);
+    dayDate.setDate(weekStartDate.getDate() + dayIndex);
+
+    var weekNum = getISOWeekNumber(weekStartDate);
+
     sheet.appendRow([
-      d.weekStart    || '',
-      d.weekTheme    || '',
-      d.day          || '',
-      d.strengthTitle|| '',
-      d.strengthDesc || '',
-      d.coachNote    || '',
-      d.metconTitle  || '',
-      d.metconDesc   || '',
-      d.timeDomain   || '',
-      d.rx           || '',
-      d.scaled       || '',
-      d.beginner     || '',
-      new Date().toLocaleDateString('en-GB')
+      weekNum,
+      formatDate(dayDate),
+      d.weekTheme     || '',
+      d.day           || '',
+      d.strengthTitle || '',
+      d.strengthDesc  || '',
+      d.coachNote     || '',
+      d.metconTitle   || '',
+      d.metconDesc    || '',
+      d.timeDomain    || '',
+      d.rx            || '',
+      d.scaled        || '',
+      d.beginner      || '',
+      formatDate(new Date())
     ]);
 
     return { status: 'ok' };

@@ -372,13 +372,14 @@ async function saveToSheets() {
   btn.textContent = 'SAVING...';
 
   const plan      = window._plan;
-  const weekStart = fmt(nextMon);
+  const weekStart = nextMon.toISOString().split('T')[0];
 
   try {
-    for (const day of plan.days) {
+    for (const [idx, day] of plan.days.entries()) {
       const params = new URLSearchParams({
         action       : 'saveDay',
         weekStart,
+        dayIndex     : idx,
         weekTheme    : plan.weekTheme,
         day          : day.day,
         strengthTitle: day.strength.title,
