@@ -97,6 +97,15 @@
   .badge.sc { background: var(--teal); color: #000; }
   .badge.bg { background: var(--accent2); color: #fff; }
 
+  .tweak-bar { display: flex; gap: 6px; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px; }
+  .tweak-input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 10px; padding: 7px 9px; outline: none; min-width: 0; }
+  .tweak-input:focus { border-color: var(--purple); }
+  .tweak-input::placeholder { color: #333; }
+  .tweak-btn { background: transparent; border: 1px solid var(--purple); color: var(--purple); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; padding: 7px 10px; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+  .tweak-btn:hover { background: var(--purple); color: #fff; }
+  .tweak-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .day-card.tweaking { opacity: 0.5; pointer-events: none; }
+
   .actions { display: flex; gap: 10px; margin-top: 18px; }
   .btn-sm { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 9px 14px; cursor: pointer; transition: all 0.2s; }
   .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
@@ -314,6 +323,10 @@ function renderPlan(plan) {
           <div class="scale-row"><span class="badge sc">SC</span><span>${esc(day.metcon.scaling.scaled)}</span></div>
           <div class="scale-row"><span class="badge bg">BG</span><span>${esc(day.metcon.scaling.beginner)}</span></div>
         </div>
+        <div class="tweak-bar">
+          <input class="tweak-input" id="tweak-${i}" placeholder="e.g. shorter metcon, no burpees..." onkeydown="if(event.key==='Enter')tweakDay(${i})"/>
+          <button class="tweak-btn" id="tweak-btn-${i}" onclick="tweakDay(${i})">↺ REDO</button>
+        </div>
       </div>`;
   });
 
@@ -327,6 +340,91 @@ function renderPlan(plan) {
   const out = document.getElementById('planOut');
   out.innerHTML = html;
   out.style.display = 'block';
+}
+
+// ── Tweak single day ─────────────────────────────────────────────────────────
+async function tweakDay(i) {
+  const note = (document.getElementById(`tweak-${i}`)?.value || '').trim();
+  if (!note) { alert('Describe what you want to change.'); return; }
+  if (!window._plan) return;
+
+  let apiKey = localStorage.getItem('anthropicKey') || '';
+  if (!apiKey) {
+    apiKey = (window.prompt('Enter your Anthropic API key:') || '').trim();
+    if (!apiKey) return;
+    localStorage.setItem('anthropicKey', apiKey);
+  }
+
+  const card = document.querySelectorAll('.day-card')[i];
+  const btn  = document.getElementById(`tweak-btn-${i}`);
+  card.classList.add('tweaking');
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  const day   = window._plan.days[i];
+  const theme = window._plan.weekTheme;
+
+  const promptText = `You are an expert CrossFit programmer. Modify ONLY this single training day based on the coach's request. Keep the same JSON structure.
+
+WEEKLY THEME: ${theme}
+DAY: ${day.day}
+CURRENT TRAINING:
+Strength: ${day.strength.title} — ${day.strength.description}
+Coach cue: ${day.strength.coachNote || 'none'}
+Metcon: ${day.metcon.title} — ${day.metcon.description}
+Time domain: ${day.metcon.timeDomain}
+RX: ${day.metcon.scaling.rx}
+Scaled: ${day.metcon.scaling.scaled}
+Beginner: ${day.metcon.scaling.beginner}
+
+COACH REQUEST: ${note}
+
+Respond ONLY with valid JSON for this single day, no markdown, no backticks:
+{
+  "day": "${day.day}",
+  "strength": { "title": "...", "description": "...", "coachNote": "..." },
+  "metcon": {
+    "title": "...",
+    "description": "...",
+    "timeDomain": "...",
+    "scaling": { "rx": "...", "scaled": "...", "beginner": "..." }
+  }
+}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: promptText }]
+      })
+    });
+
+    const data  = await res.json();
+    const raw   = data.content.map(b => b.text || '').join('');
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const updated = JSON.parse(clean);
+
+    window._plan.days[i] = updated;
+    renderPlan(window._plan);
+
+    // Re-populate the tweak input with the note so user remembers what they changed
+    const input = document.getElementById(`tweak-${i}`);
+    if (input) input.value = note;
+
+  } catch (e) {
+    card.classList.remove('tweaking');
+    btn.textContent = '↺ REDO';
+    btn.disabled = false;
+    alert('Tweak error: ' + e.message);
+  }
 }
 
 function copyPlan() {
