@@ -205,7 +205,7 @@ async function generatePlan() {
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('planOut').style.display = 'none';
 
-  const prompt = `You are an expert CrossFit programmer. Analyze the training log and generate a complete 5-day plan for next week.
+  const promptText = `You are an expert CrossFit programmer. Analyze the training log and generate a complete 5-day plan for next week.
 
 TRAINING LOG:
 ${log}
@@ -250,7 +250,7 @@ Respond ONLY with valid JSON, no markdown, no backticks:
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 4000,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: 'user', content: promptText }]
       })
     });
 
