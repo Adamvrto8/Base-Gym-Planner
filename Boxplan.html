@@ -8,7 +8,7 @@
 <style>
   :root {
     --bg: #0d0d0d; --surface: #161616; --surface2: #1f1f1f;
-    --border: #2a2a2a; --accent: #4caf3f; --accent2: #6fd45f;
+    --border: #2a2a2a; --accent: #4E8D28; --accent2: #6ab234;
     --teal: #3af0e8; --purple: #a855f7; --amber: #f59e0b;
     --text: #f0f0f0; --muted: #555; --muted2: #333;
   }
@@ -72,14 +72,14 @@
   /* DAY GRID */
   .days-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
   .day-card { background: var(--surface2); border: 1px solid var(--border); overflow: hidden; animation: fadeUp 0.35s ease both; }
-  .day-card:nth-child(1) { animation-delay:.05s; border-top: 3px solid var(--accent); }
-  .day-card:nth-child(2) { animation-delay:.10s; border-top: 3px solid var(--teal); }
-  .day-card:nth-child(3) { animation-delay:.15s; border-top: 3px solid var(--accent2); }
+  .day-card:nth-child(1) { animation-delay:.05s; border-top: 3px solid #f0c030; }
+  .day-card:nth-child(2) { animation-delay:.10s; border-top: 3px solid #4E8D28; }
+  .day-card:nth-child(3) { animation-delay:.15s; border-top: 3px solid #e05555; }
   .day-card:nth-child(4) { animation-delay:.20s; border-top: 3px solid var(--purple); }
-  .day-card:nth-child(5) { animation-delay:.25s; border-top: 3px solid var(--amber); }
+  .day-card:nth-child(5) { animation-delay:.25s; border-top: 3px solid #3ab0d0; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
-  .day-colors { --c0: #e8ff3a; --c1: #3af0e8; --c2: #ff4d1c; --c3: #a855f7; --c4: #f59e0b; }
+  .day-colors { --c0: #f0c030; --c1: #4E8D28; --c2: #e05555; --c3: #a855f7; --c4: #3ab0d0; }
   .day-header { padding: 10px 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
   .day-name { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; }
   .day-date { font-family: 'DM Mono', monospace; font-size: 9px; color: #444; }
@@ -129,7 +129,7 @@
 
   <header>
     <div style="display:flex;align-items:center;gap:22px">
-      <img src="logo.jpg" alt="Base Gym Logo" style="width:82px;height:82px;border-radius:50%;object-fit:cover;border:2px solid #2a7a1a;"/>
+      <img src="logo.jpg" alt="Base Gym Logo" style="width:82px;height:82px;border-radius:50%;object-fit:cover;border:2px solid #4E8D28;"/>
       <div>
         <h1>BASE<span> GYM</span></h1>
         <p class="sub">// WEEKLY WOD PROGRAMMING FOR BASE GYM</p>
@@ -284,7 +284,7 @@ Respond ONLY with valid JSON, no markdown, no backticks:
 
 // ── Render ───────────────────────────────────────────────────────────────────
 const DAY_SHORT  = ['MON','TUE','WED','THU','FRI'];
-const DAY_COLORS = ['#e8ff3a','#3af0e8','#ff4d1c','#a855f7','#f59e0b'];
+const DAY_COLORS = ['#f0c030','#4E8D28','#e05555','#a855f7','#3ab0d0'];
 const DAY_FG     = ['#000','#000','#fff','#fff','#000'];
 
 function esc(s) {
