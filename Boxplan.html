@@ -129,7 +129,22 @@
 
   <header>
     <div style="display:flex;align-items:center;gap:22px">
-      <img src="logo.jpg" alt="Base Gym Logo" style="width:82px;height:82px;border-radius:50%;object-fit:cover;border:2px solid #4E8D28;"/>
+      <svg width="82" height="82" viewBox="0 0 82 82" style="flex-shrink:0;border-radius:50%;border:2px solid #4E8D28;" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="41" cy="41" r="41" fill="#111"/>
+        <!-- barbell -->
+        <rect x="16" y="37" width="50" height="8" rx="4" fill="#4E8D28"/>
+        <!-- left weight plates -->
+        <rect x="13" y="28" width="7" height="26" rx="3" fill="#e0e0e0"/>
+        <rect x="8"  y="31" width="5" height="20" rx="2.5" fill="#c8c8c8"/>
+        <!-- right weight plates -->
+        <rect x="62" y="28" width="7" height="26" rx="3" fill="#e0e0e0"/>
+        <rect x="69" y="31" width="5" height="20" rx="2.5" fill="#c8c8c8"/>
+        <!-- collar rings -->
+        <rect x="23" y="34" width="4" height="14" rx="2" fill="#888"/>
+        <rect x="55" y="34" width="4" height="14" rx="2" fill="#888"/>
+        <!-- BG text -->
+        <text x="41" y="72" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" font-weight="900" fill="#4E8D28" letter-spacing="2">BASE</text>
+      </svg>
       <div>
         <h1>BASE<span> GYM</span></h1>
         <p class="sub">// WEEKLY WOD PROGRAMMING FOR BASE GYM</p>
@@ -318,7 +333,6 @@ function renderPlan(plan) {
         <div class="day-body">
           <div class="stag">// Strength</div>
           <div class="scontent"><strong>${esc(day.strength.title)}</strong><br>${esc(day.strength.description)}</div>
-          ${day.strength.coachNote ? `<div class="stag">// Cue</div><div class="scontent" style="color:#555;font-style:italic;font-size:10px">${esc(day.strength.coachNote)}</div>` : ''}
           <div class="stag">// Metcon</div>
           <div class="scontent"><strong>${esc(day.metcon.title)}</strong><br>${esc(day.metcon.description)}</div>
           <div class="time-badge">⏱ ${esc(day.metcon.timeDomain)}</div>
